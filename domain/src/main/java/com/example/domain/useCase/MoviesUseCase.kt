@@ -8,11 +8,12 @@ import com.example.domain.repository.MovieRepository
 import com.example.domain.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import java.io.IOException
 import javax.inject.Inject
 
 class MoviesUseCase @Inject constructor(private val repository: MovieRepository) {
 
-    operator fun invoke(catId:String): Flow<Resource<Pager<Int,MovieItemModel>>> = flow {
+    operator fun invoke(catId:Int): Flow<Resource<Pager<Int,MovieItemModel>>> = flow {
         try {
             emit(Resource.Loading<Pager<Int,MovieItemModel>>())
             val getMovies = Pager(
@@ -24,7 +25,8 @@ class MoviesUseCase @Inject constructor(private val repository: MovieRepository)
             emit(Resource.Success<Pager<Int, MovieItemModel>>(getMovies))
         }catch (e:Exception){
             emit(Resource.Error<Pager<Int,MovieItemModel>>("${e.localizedMessage} : An unexpected error happened"))
+        }catch (e:IOException){
+            emit(Resource.Error<Pager<Int , MovieItemModel>>("${e.localizedMessage} : An unexpected error happened"))
         }
-
     }
 }

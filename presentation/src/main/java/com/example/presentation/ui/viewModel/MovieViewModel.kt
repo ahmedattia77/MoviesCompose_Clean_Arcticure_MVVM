@@ -1,5 +1,6 @@
 package com.example.presentation.ui.viewModel
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,25 +18,26 @@ class MovieViewModel @Inject constructor(
     private val useCase: MoviesUseCase
 ) : ViewModel() {
 
-    var state = mutableStateOf(MovieState())
-        private set
+    private var _movieState = mutableStateOf(MovieState())
 
+    val movies: State<MovieState>
+        get() = _movieState
 
-    fun getMovie (genre:String){
+    fun getMovie (genre:Int){
         useCase.invoke(genre).onEach { result ->
             when (result){
                 is Resource.Success -> {
-                    state.value = MovieState(
+                    _movieState.value = MovieState(
                         movies = result.data
                     )
                 }
                 is Resource.Error -> {
-                    state.value = MovieState(
+                    _movieState.value = MovieState(
                         error = result.message ?: "An unexpected value"
                     )
                 }
                 is Resource.Loading -> {
-                    state.value = MovieState(
+                    _movieState.value = MovieState(
                         isLoading = true
                     )
                 }

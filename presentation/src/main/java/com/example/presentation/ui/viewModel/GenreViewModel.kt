@@ -1,5 +1,6 @@
 package com.example.presentation.ui.viewModel
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,14 +18,19 @@ class GenreViewModel @Inject constructor(
     private val useCase: GenreUseCase
 ) : ViewModel() {
 
-    var state = mutableStateOf(GenreState())
+    var _state = mutableStateOf(GenreState())
         private set
-    var selectedGenre = mutableStateOf(GenreItemModel(id = 27 , name = "Action"))
+    var _selectedGenre = mutableStateOf(GenreItemModel(id = 28 , name = "Action"))
         private set
 
-    fun setSelectedGenre (selectedGenre:GenreItemModel) {
-        this.selectedGenre.value = selectedGenre
-        this.selectedGenre.value = this.selectedGenre.value
+    val genres: State<GenreState>
+        get() = _state
+    val selectedGenre: State<GenreItemModel>
+        get() = _selectedGenre
+
+    fun setSelectedGenre(selectedGenre: GenreItemModel){
+        _selectedGenre.value = selectedGenre
+        _selectedGenre.value = _selectedGenre.value
     }
 
     init {
@@ -35,17 +41,17 @@ class GenreViewModel @Inject constructor(
         useCase.invoke().onEach { result ->
             when (result){
                 is Resource.Success -> {
-                    state.value = GenreState(
+                    _state.value = GenreState(
                         genre = result.data?.genres ?: emptyList()
                     )
                 }
                 is Resource.Error -> {
-                    state.value = GenreState(
+                    _state.value = GenreState(
                         error = result.message ?: "An unexpected value"
                     )
                 }
                 is Resource.Loading -> {
-                    state.value = GenreState(
+                    _state.value = GenreState(
                         isLoading = true
                     )
                 }

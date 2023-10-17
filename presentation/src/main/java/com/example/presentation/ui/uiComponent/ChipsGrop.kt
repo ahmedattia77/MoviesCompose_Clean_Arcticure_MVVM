@@ -1,6 +1,7 @@
 package com.example.presentation.ui.uiComponent
 
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,24 +18,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.domain.model.movieGenre.GenreItemModel
-import com.example.domain.model.movieGenre.GenreModel
+import com.example.presentation.ui.viewModel.GenreViewModel
+import com.example.presentation.ui.viewModel.MovieViewModel
 
 @Composable
-fun ChipGroupCompose(chipList : List<GenreItemModel>) {
+fun ChipGroupCompose(
+    chipList : List<GenreItemModel> ,
+    movieViewModel: MovieViewModel = hiltViewModel() ,
+    genreViewModel: GenreViewModel = hiltViewModel()) {
 
-//    val chipList: List<String> = listOf(
-//        "Spent",
-//        "Add Funds",
-//        "Savings",
-//        "Add Funds",
-//        "Savings",
-//        "Add Funds",
-//        "Savings"
-//    )
-
+    val context = LocalContext.current
     var selected by remember { mutableStateOf("") }
 
     LazyRow(
@@ -48,13 +46,15 @@ fun ChipGroupCompose(chipList : List<GenreItemModel>) {
                 selected = selected,
                 onSelected = {
                     selected = it
+                    genreViewModel._selectedGenre.value = item
+                    movieViewModel.getMovie(item.id)
+                    Toast.makeText(context , genreViewModel._selectedGenre.value.name , Toast.LENGTH_SHORT).show()
                 }
             )
         })
     }
 
 }
-
 @Composable
 fun Chip(
     title: String,
@@ -63,7 +63,6 @@ fun Chip(
 ) {
 
     val isSelected = selected == title
-
     val background = if (isSelected) Color.DarkGray else Color.LightGray
     val contentColor = if (isSelected) Color.White else Color.Black
 
@@ -91,9 +90,7 @@ fun Chip(
                     tint = Color.White
                 )
             }
-
             Text(text = title, color = contentColor, fontSize = 16.sp)
-
         }
     }
 

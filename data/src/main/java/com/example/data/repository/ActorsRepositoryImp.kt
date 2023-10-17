@@ -24,8 +24,6 @@ class ActorsRepositoryImp @Inject constructor(
             fromRemoteActorToModule(apiService.getMovieActors(movie_id = movie_id)).cast[0].name)
 
         return actorMapper.fromRemoteActorToModule(apiService.getMovieActors(movie_id = movie_id))
-//        return apiService.getMovieActors(movie_id = movie_id)
-
     }
 
 }

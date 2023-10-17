@@ -1,22 +1,19 @@
 package com.example.presentation.ui.screen
 
+
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
+
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
@@ -34,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.viewpager.widget.ViewPager
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -43,19 +42,22 @@ import com.example.presentation.ui.uiComponent.Chip
 import com.example.presentation.ui.uiComponent.CircleProgressbar
 import com.example.presentation.ui.uiComponent.ImagePager
 import com.example.presentation.ui.viewModel.MovieDetailsViewModel
+import com.example.presentation.ui.viewModel.SharedViewModel
 import com.example.presentation.utils.Constant
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MovieDetails (
-    detailsViewModel: MovieDetailsViewModel = hiltViewModel()
+    navHostController: NavHostController,
+    detailsViewModel: MovieDetailsViewModel = hiltViewModel(),
+    sharedViewModel: SharedViewModel
 ) {
+
     val context = LocalContext.current
-    val imagesList : List<String> = listOf(
-        "https://fastly.picsum.photos/id/3/5000/3333.jpg?hmac=GDjZ2uNWE3V59PkdDaOzTOuV3tPWWxJSf4fNcxu4S2g",
-        "https://fastly.picsum.photos/id/7/4728/3168.jpg?hmac=c5B5tfYFM9blHHMhuu4UKmhnbZoJqrzNOP9xjkV4w3o" ,
-        "https://fastly.picsum.photos/id/6/5000/3333.jpg?hmac=pq9FRpg2xkAQ7J9JTrBtyFcp9-qvlu8ycAi7bUHlL7I")
+
+    Log.i("sendIdIssue" , "from movie details : "+detailsViewModel.movie_id.value.toString())
+    detailsViewModel.setId(sharedViewModel.movie_id.value)
 
     Column(
         verticalArrangement = Arrangement.Top ,
@@ -65,15 +67,21 @@ fun MovieDetails (
 
         if (detailsViewModel.movieImages.value.isLoading
             && detailsViewModel.actorState.value.isLoading
-            && detailsViewModel.movieState.value.isLoading)
+            && detailsViewModel.movieState.value.isLoading){
+            detailsViewModel.getMovieDetails()
+            detailsViewModel.getActor()
+            detailsViewModel.getMovieImages()
+
             CircleProgressbar()
+        }
 
 
         if (detailsViewModel.movieImages.value.backdropList.isNotEmpty()) {
             ImagePager(detailsViewModel.movieImages.value.backdropList)
         }
 
-        if (detailsViewModel.movieState.value.error.isEmpty()){
+        if (detailsViewModel.movieState.value.movieDetails != null){
+            Log.i("movieViewModel" , detailsViewModel.movie_id.toString())
             val movieDetails = detailsViewModel.movieState.value.movieDetails
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = movieDetails?.title !!,
@@ -84,7 +92,6 @@ fun MovieDetails (
                 textAlign = TextAlign.Start,
                 color = colorResource(id = R.color.white),
                 maxLines = 1 ,
-                fontFamily = FontFamily.Monospace,
                 fontWeight = FontWeight.W600)
 
             Text(text = movieDetails?.release_date !!,

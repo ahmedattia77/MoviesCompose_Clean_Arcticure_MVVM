@@ -1,6 +1,7 @@
 package com.example.presentation.ui.viewModel
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -12,6 +13,7 @@ import com.example.domain.utils.MovieDetailsState
 import com.example.domain.utils.MovieImagesState
 import com.example.domain.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -23,8 +25,8 @@ class MovieDetailsViewModel @Inject constructor(
     private val movieImagesUseCase: MovieImagesUseCase
 ) : ViewModel() {
 
-    var movie_id:Int  = 980489
-
+    //980489
+    var movie_id:MutableState<Int>  = mutableStateOf(0)
     var movieState = mutableStateOf(MovieDetailsState())
         private set
 
@@ -36,13 +38,17 @@ class MovieDetailsViewModel @Inject constructor(
 
 
     init {
-        getMovieDetails() // model
+        getMovieDetails()
         getActor()
         getMovieImages()
     }
 
-    private fun getMovieDetails (){
-        useCase.invoke(movie_id).onEach { result ->
+    fun setId (movieId:Int){
+        this.movie_id.value = movieId
+    }
+
+     fun getMovieDetails (){
+        useCase.invoke(movie_id.value).onEach { result ->
             when (result){
                 is Resource.Success -> {
                     movieState.value = MovieDetailsState(
@@ -64,8 +70,8 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
 
-    private fun getActor (){
-        actorUseCase.invoke(movie_id).onEach { result ->
+     fun getActor (){
+        actorUseCase.invoke(movie_id.value).onEach { result ->
             when (result){
                 is Resource.Success -> {
                     Log.i("viewModel" ,"success ${result.message.toString()}")
@@ -90,8 +96,8 @@ class MovieDetailsViewModel @Inject constructor(
     }
 
 
-    private fun getMovieImages (){
-        movieImagesUseCase.invoke(movie_id).onEach { result ->
+     fun getMovieImages (){
+        movieImagesUseCase.invoke(movie_id.value).onEach { result ->
             when (result){
                 is Resource.Success -> {
                     movieImages.value = MovieImagesState(

@@ -3,8 +3,9 @@ package com.example.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.navigation.compose.rememberNavController
+import com.example.presentation.navigation.setUpNavGraph
 import com.example.presentation.ui.screen.HomeScreen
-import com.example.presentation.ui.screen.MovieDetails
 import dagger.hilt.android.AndroidEntryPoint
 
 class Main {
@@ -14,7 +15,9 @@ class Main {
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContent {
-                HomeScreen()
+                val state = rememberNavController()
+                setUpNavGraph(navHostController = state)
+//                HomeScreen()
             }
         }
     }

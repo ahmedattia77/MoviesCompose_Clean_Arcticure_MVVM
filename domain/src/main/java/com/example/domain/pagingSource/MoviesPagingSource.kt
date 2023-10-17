@@ -7,7 +7,7 @@ import com.example.domain.repository.MovieRepository
 
 class MoviesPagingSource(
     private val movieRepository: MovieRepository,
-    private val genreId:String
+    private val genreId:Int
     ) : PagingSource<Int , MovieItemModel>(){
 
     override fun getRefreshKey(state: PagingState<Int, MovieItemModel>): Int? {
@@ -20,8 +20,8 @@ class MoviesPagingSource(
             val response = movieRepository.getMovies(page = page , withGenres = genreId)
             LoadResult.Page(
                 data = response.results,
-                nextKey = if (response.results.isEmpty()) null else page.plus(1),
-                prevKey = if (page == 1) null else page.minus(1)
+                prevKey = if (page == 1) null else page.minus(1),
+                nextKey = if (response.results.isEmpty()) null else page.plus(1)
             )
         }catch (e:Exception){
             LoadResult.Error(e)

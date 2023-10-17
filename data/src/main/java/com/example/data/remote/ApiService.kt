@@ -16,10 +16,10 @@ interface ApiService {
     suspend fun getMovieGenre() : GenreResponse
 
     @GET("3/discover/movie?api_key=${Constant.API_KEY}")
-    suspend fun getMovies (
-        @Query("with_genres") with_genres:String,
-        @Query("page") page: Int
-    ) : ResponseMovies
+    suspend fun getMovies(
+        @Query("with_genres") genresId:Int ,
+        @Query("page") page: Int,
+    ): ResponseMovies
 
     @GET("3/movie/{movie_id}?api_key=${Constant.API_KEY}")
     suspend fun getMovieDetails (
