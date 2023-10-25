@@ -11,12 +11,14 @@ import com.example.data.repository.GenreRepositoryImpl
 import com.example.data.repository.MovieDetailsRepositoryImpl
 import com.example.data.repository.MovieImagesRepositoryImpl
 import com.example.data.repository.MovieRepositoryImpl
+import com.example.data.repository.MovieSimilarRepositoryImpl
 import com.example.data.utils.Constant
 import com.example.domain.repository.ActorsRepository
 import com.example.domain.repository.GenreRepository
 import com.example.domain.repository.MovieDetailsRepository
 import com.example.domain.repository.MovieImagesRepository
 import com.example.domain.repository.MovieRepository
+import com.example.domain.repository.MovieSimilarRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -76,5 +78,12 @@ object AppModule {
         apiService: ApiService ,
         imagesMapper: MovieImagesMapper
     ) : MovieImagesRepository = MovieImagesRepositoryImpl (apiService , imagesMapper)
+
+    @Provides
+    @Singleton
+    fun provideMovieSimilarRepo(
+        apiService: ApiService,
+        movieMapper: MovieMapper
+    ) : MovieSimilarRepository = MovieSimilarRepositoryImpl (apiService , movieMapper)
 
 }

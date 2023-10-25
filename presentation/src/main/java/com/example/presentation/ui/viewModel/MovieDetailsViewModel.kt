@@ -1,6 +1,7 @@
 package com.example.presentation.ui.viewModel
 
 import android.util.Log
+import androidx.appcompat.resources.Compatibility.Api15Impl
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -8,9 +9,11 @@ import androidx.lifecycle.viewModelScope
 import com.example.domain.useCase.ActorUseCase
 import com.example.domain.useCase.MovieDetailsUseCase
 import com.example.domain.useCase.MovieImagesUseCase
+import com.example.domain.useCase.MoviesSimilarUseCase
 import com.example.domain.utils.ActorState
 import com.example.domain.utils.MovieDetailsState
 import com.example.domain.utils.MovieImagesState
+import com.example.domain.utils.MovieSimilarState
 import com.example.domain.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,13 +23,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
-    private val useCase: MovieDetailsUseCase ,
+    private val useCase: MovieDetailsUseCase,
     private val actorUseCase: ActorUseCase,
-    private val movieImagesUseCase: MovieImagesUseCase
+    private val movieImagesUseCase: MovieImagesUseCase,
+    private val moviesSimilarUseCase: MoviesSimilarUseCase
 ) : ViewModel() {
 
     //980489
-    var movie_id:MutableState<Int>  = mutableStateOf(0)
+    private var movie_id:MutableState<Int> = mutableStateOf(0)
     var movieState = mutableStateOf(MovieDetailsState())
         private set
 
@@ -35,16 +39,25 @@ class MovieDetailsViewModel @Inject constructor(
 
     var movieImages = mutableStateOf(MovieImagesState())
         private set
-
+    var movieSimilar = mutableStateOf(MovieSimilarState())
+        private set
 
     init {
-        getMovieDetails()
-        getActor()
+        getMovieSimilar()
         getMovieImages()
+        getActor()
+        getMovieDetails()
     }
 
     fun setId (movieId:Int){
         this.movie_id.value = movieId
+    }
+
+    fun updateState (){
+        getMovieSimilar()
+        getMovieImages()
+        getActor()
+        getMovieDetails()
     }
 
      fun getMovieDetails (){
@@ -106,7 +119,7 @@ class MovieDetailsViewModel @Inject constructor(
                 }
                 is Resource.Error -> {
                     movieImages.value = MovieImagesState(
-                        error = result.message.toString()
+                        error = result.message ?: "An unexpected value"
                     )
                 }
                 is Resource.Loading -> {
@@ -118,6 +131,26 @@ class MovieDetailsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-
+    fun getMovieSimilar (){
+        moviesSimilarUseCase.invoke(movie_id.value).onEach { result ->
+            when(result){
+                is Resource.Success -> {
+                    movieSimilar.value = MovieSimilarState(
+                        movies = result.data
+                    )
+                }
+                is Resource.Loading -> {
+                    movieSimilar.value = MovieSimilarState(
+                        isLoading = true
+                    )
+                }
+                is Resource.Error -> {
+                    movieSimilar.value = MovieSimilarState(
+                        error = result.message ?: "An unexpected value"
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
 
 }

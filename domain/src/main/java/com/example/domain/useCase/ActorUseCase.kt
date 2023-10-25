@@ -1,9 +1,7 @@
 package com.example.domain.useCase
 
 import com.example.data.model.movieActors.ActorsModel
-import com.example.domain.model.movieActors_.ActorsResponse
 import com.example.domain.repository.ActorsRepository
-import com.example.domain.utils.ActorState
 import com.example.domain.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

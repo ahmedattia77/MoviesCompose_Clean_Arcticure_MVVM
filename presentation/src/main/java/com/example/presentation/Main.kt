@@ -17,7 +17,6 @@ class Main {
             setContent {
                 val state = rememberNavController()
                 setUpNavGraph(navHostController = state)
-//                HomeScreen()
             }
         }
     }

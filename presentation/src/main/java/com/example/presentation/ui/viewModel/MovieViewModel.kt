@@ -4,7 +4,10 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.domain.model.movie.MovieItemModel
+import com.example.domain.model.movieGenre.GenreItemModel
 import com.example.domain.useCase.MoviesUseCase
+import com.example.domain.utils.GenreState
 import com.example.domain.utils.MovieState
 import com.example.domain.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,12 +22,18 @@ class MovieViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var _movieState = mutableStateOf(MovieState())
+    var genre = mutableStateOf(28)
 
     val movies: State<MovieState>
         get() = _movieState
 
-    fun getMovie (genre:Int){
-        useCase.invoke(genre).onEach { result ->
+
+    init {
+        getMovie()
+    }
+
+    fun getMovie (){
+        useCase.invoke(genre.value).onEach { result ->
             when (result){
                 is Resource.Success -> {
                     _movieState.value = MovieState(

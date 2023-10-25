@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.data.mapper.ActorMapper
 import com.example.data.model.movieActors.ActorsModel
 import com.example.data.remote.ApiService
-import com.example.domain.model.movieActors_.ActorsResponse
 import com.example.domain.repository.ActorsRepository
 import javax.inject.Inject
 

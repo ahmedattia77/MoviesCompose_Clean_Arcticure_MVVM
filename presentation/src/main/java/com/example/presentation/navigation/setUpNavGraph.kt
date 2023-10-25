@@ -5,11 +5,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.presentation.navigation.Screen
 import com.example.presentation.ui.screen.HomeScreen
 import com.example.presentation.ui.screen.MovieDetails
 import com.example.presentation.ui.viewModel.SharedViewModel
-import com.example.presentation.ui.wiget.MovieList
 
 @Composable
 fun setUpNavGraph(

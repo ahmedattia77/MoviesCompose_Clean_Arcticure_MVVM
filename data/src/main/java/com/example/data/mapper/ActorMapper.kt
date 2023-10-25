@@ -1,10 +1,10 @@
 package com.example.data.mapper
 
 import com.example.data.model.movieActors.ActorsModel
+import com.example.data.model.movieActors.ActorsResponse
+import com.example.data.model.movieActors.Cast
 import com.example.domain.model.movieActors.CastModel
-import com.example.domain.model.movieActors_.ActorsResponse
-import com.example.domain.model.movieActors_.Cast
-import com.example.domain.model.movieActors_.Crew
+
 
 import javax.inject.Inject
 

@@ -25,8 +25,6 @@ class GenreViewModel @Inject constructor(
 
     val genres: State<GenreState>
         get() = _state
-    val selectedGenre: State<GenreItemModel>
-        get() = _selectedGenre
 
     fun setSelectedGenre(selectedGenre: GenreItemModel){
         _selectedGenre.value = selectedGenre

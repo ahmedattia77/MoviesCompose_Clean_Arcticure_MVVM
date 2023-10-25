@@ -1,7 +1,6 @@
 package com.example.presentation.ui.uiComponent
 
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,43 +17,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.example.domain.model.movieGenre.GenreItemModel
 import com.example.presentation.ui.viewModel.GenreViewModel
 import com.example.presentation.ui.viewModel.MovieViewModel
 
 @Composable
 fun ChipGroupCompose(
-    chipList : List<GenreItemModel> ,
-    movieViewModel: MovieViewModel = hiltViewModel() ,
-    genreViewModel: GenreViewModel = hiltViewModel()) {
-
-    val context = LocalContext.current
-    var selected by remember { mutableStateOf("") }
+    chipList: List<GenreItemModel>,
+    genreViewModel: GenreViewModel = hiltViewModel() ,
+    onClick : (GenreItemModel) -> Unit
+) {
+    var selected by remember { mutableStateOf(genreViewModel._selectedGenre.value.name) }
 
     LazyRow(
         contentPadding = PaddingValues(start = 16.dp),
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        items(items = chipList , itemContent = { item ->
+        items(items = chipList, itemContent = { item ->
             Chip(
                 title = item.name,
                 selected = selected,
                 onSelected = {
                     selected = it
                     genreViewModel._selectedGenre.value = item
-                    movieViewModel.getMovie(item.id)
-                    Toast.makeText(context , genreViewModel._selectedGenre.value.name , Toast.LENGTH_SHORT).show()
+                    onClick(item)
                 }
             )
         })
     }
-
 }
+
 @Composable
 fun Chip(
     title: String,

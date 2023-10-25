@@ -1,7 +1,7 @@
 package com.example.data.remote
 
 import com.example.data.model.movie.ResponseMovies
-import com.example.domain.model.movieActors_.ActorsResponse
+import com.example.data.model.movieActors.ActorsResponse
 import com.example.data.model.movieDetails.MovieDetailsResponse
 import com.example.data.model.movieGenre.GenreResponse
 import com.example.data.model.movieImages.MovieImagesResponse
@@ -32,10 +32,10 @@ interface ApiService {
         @Query("api_key") api_key: String = Constant.API_KEY
     ) : ActorsResponse
 
-    @GET("3/movie/{movie_id}/similar")
+    @GET("3/movie/{movie_id}/similar?api_key=${Constant.API_KEY}")
     suspend fun getSimilar (
         @Path("movie_id") movie_id:Int,
-        @Query("api_key") api_key:String
+        @Query("page") page: Int
     ) : ResponseMovies
 
     @GET("3/movie/{movie_id}/images?api_key=${Constant.API_KEY}")
